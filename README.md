@@ -25,3 +25,15 @@ A lightweight, professional feedback collection system designed for events. This
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+
+## 🔒 Security
+
+- **Row Level Security (RLS)**: Database access is restricted. Anonymous users can only submit feedback, while read access is protected.
+- **Admin Access**: The results dashboard is protected by a secure access code to ensure data privacy.
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
+
+---
+*Developed for Yksin vanhempana ry*
