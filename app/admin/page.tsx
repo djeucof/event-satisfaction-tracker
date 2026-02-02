@@ -3,21 +3,20 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-// English comments for the logic
-const supabaseUrl = 'https://eufysgruxfxrpujczmpg.supabase.co';
-const supabaseAnonKey = 'sb_publishable_UgBgAk3q6_rpSfIHIjintg_MqwuGv9Z';
+// English comments for clarity
+const supabaseUrl = 'https://eufysgruxfxrpujczmpg.supabase.co'; 
+const supabaseAnonKey = 'sb_publishable_UgBgAk3q6_rpSfIHIjintg_MqwuGv9Z'; 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function AdminPage() {
   const [votes, setVotes] = useState<any[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  // Password check function
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === 'YV2026&&&77') {
-      // YOU CAN CHANGE PASSWORD HERE
+    if (password === 'YV2026') {
       setIsAuthenticated(true);
       fetchVotes();
     } else {
@@ -33,42 +32,38 @@ export default function AdminPage() {
     if (data) setVotes(data);
   }
 
+  // Logic to filter votes based on event name search
+  const filteredVotes = votes.filter(v => 
+    (v.event_name || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const downloadCSV = () => {
-    const headers = 'ID,Aika,Tapahtuma,Vastaus\n';
-    const rows = votes
-      .map((v) => `${v.id},${v.created_at},${v.event_name || ''},${v.vote}`)
-      .join('\n');
-    const blob = new Blob([headers + rows], {
-      type: 'text/csv;charset=utf-8;',
-    });
-    const link = document.createElement('a');
+    const headers = "ID,Aika,Tapahtuma,Vastaus\n";
+    // Downloads only filtered results
+    const rows = filteredVotes.map(v => 
+      `${v.id},${v.created_at},${v.event_name || ''},${v.vote}`
+    ).join("\n");
+    
+    const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `tulokset_${new Date().toLocaleDateString()}.csv`;
+    link.download = `tulokset_${searchTerm || 'kaikki'}_${new Date().toLocaleDateString()}.csv`;
     link.click();
   };
 
-  // Login Screen
   if (!isAuthenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <form
-          onSubmit={handleLogin}
-          className="p-8 bg-white shadow-xl rounded-lg border"
-        >
-          <h2 className="text-xl font-bold mb-4 text-[#a664a6]">
-            Kirjaudu sisään
-          </h2>
-          <input
-            type="password"
-            placeholder="Salasana"
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+        <form onSubmit={handleLogin} className="w-full max-w-sm p-8 bg-white shadow-xl rounded-lg border">
+          <h2 className="text-xl font-bold mb-4 text-[#a664a6]">Kirjaudu sisään</h2>
+          <input 
+            type="password" 
+            placeholder="Salasana" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 border rounded mb-4 outline-none focus:border-[#a664a6]"
           />
-          <button
-            type="submit"
-            className="w-full bg-[#a664a6] text-white py-2 rounded font-bold"
-          >
+          <button type="submit" className="w-full bg-[#a664a6] text-white py-2 rounded font-bold">
             Avaa tulokset
           </button>
         </form>
@@ -76,54 +71,59 @@ export default function AdminPage() {
     );
   }
 
-  // Admin Dashboard (visible only after password)
   return (
-    <div className="p-8 font-sans bg-white min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-[#a664a6]">Tulokset (Admin)</h1>
-        <div className="flex gap-4">
-          <button
-            onClick={fetchVotes}
-            className="border border-[#a664a6] text-[#a664a6] px-4 py-2 rounded"
-          >
+    <div className="p-4 md:p-8 font-sans bg-white min-h-screen">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[#a664a6]">Tulokset (Admin)</h1>
+          <p className="text-sm text-gray-500">Yhteensä: {filteredVotes.length} vastausta</p>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <input 
+            type="text"
+            placeholder="Etsi tapahtuman nimellä..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border p-2 rounded text-sm w-full md:w-64 outline-none focus:border-[#a664a6]"
+          />
+          <button onClick={fetchVotes} className="border border-gray-300 px-4 py-2 rounded text-sm hover:bg-gray-50">
             Päivitä
           </button>
-          <button
-            onClick={downloadCSV}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-          >
+          <button onClick={downloadCSV} className="bg-green-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-green-700">
             Lataa Excel (CSV)
           </button>
         </div>
       </div>
-
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border p-2">Aika</th>
-              <th className="border p-2">Tapahtuma</th>
-              <th className="border p-2">Vastaus</th>
+      
+      <div className="overflow-x-auto shadow-sm border rounded-lg">
+        <table className="w-full border-collapse bg-white">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="border-b p-3 text-left text-sm font-semibold text-gray-600">Aika</th>
+              <th className="border-b p-3 text-left text-sm font-semibold text-gray-600">Tapahtuma</th>
+              <th className="border-b p-3 text-center text-sm font-semibold text-gray-600">Vastaus</th>
             </tr>
           </thead>
           <tbody>
-            {votes.map((v) => (
-              <tr key={v.id} className="text-center hover:bg-gray-50">
-                <td className="border p-2 text-sm">
+            {filteredVotes.map((v) => (
+              <tr key={v.id} className="hover:bg-gray-50 transition-colors">
+                <td className="border-b p-3 text-xs text-gray-500">
                   {new Date(v.created_at).toLocaleString('fi-FI')}
                 </td>
-                <td className="border p-2 font-medium">
-                  {v.event_name || '—'}
+                <td className="border-b p-3 font-medium text-gray-800">
+                  {v.event_name || <span className="text-gray-300 italic">Ei nimeä</span>}
                 </td>
-                <td className="border p-2 text-2xl">
-                  {v.vote === 'like'
-                    ? '😃'
-                    : v.vote === 'neutral'
-                    ? '😐'
-                    : '😞'}
+                <td className="border-b p-3 text-3xl text-center">
+                  {v.vote === 'like' ? '😃' : v.vote === 'neutral' ? '😐' : '😞'}
                 </td>
               </tr>
             ))}
+            {filteredVotes.length === 0 && (
+              <tr>
+                <td colSpan={3} className="p-10 text-center text-gray-400">Ei tuloksia tällä haulla.</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
