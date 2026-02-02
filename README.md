@@ -1,14 +1,23 @@
 # Event Satisfaction Tracker 😃😐😞
 
-A lightweight, professional feedback collection system designed for events. This application allows participants (specifically optimized for children) to quickly rate their experience using intuitive emojis.
-
-## 🚀 Features
-
-- **Kid-Friendly UI**: Simple, large, and colorful interactive emojis.
-- **Event-Specific Tracking**: Ability to set unique event names for organized data collection.
-- **Secure Admin Dashboard**: Password-protected access to real-time results.
-- **Data Export**: One-click CSV export for analysis in Excel or Google Sheets.
-- **Real-time Database**: Powered by Supabase for instant data synchronization.
+  <table>
+  <tr>
+    <td width="220" valign="top">
+      <img src="./demo.gif" width="200">
+    </td>
+    <td valign="top">
+      <p><b>A lightweight feedback collection system designed for events. This application allows participants (specifically optimized for children) to quickly rate their experience using intuitive emojis.</b></p>
+      <p> <h2>🚀 Features</h2></p>
+      <ul>
+        <li><b>Kid-Friendly UI:</b> Simple, large, and colorful interactive emojis.</li>
+        <li><b>Event-Specific Tracking:</b> Ability to set unique event names for organized data collection.</li>
+        <li><b>Secure Admin Dashboard:</b> Password-protected access to real-time results.</li>
+      <li><b>Data Export:</b> One-click CSV export for analysis in Excel or Google Sheets.</li>
+         <li><b>Real-time Database:</b> Powered by Supabase for instant data synchronization.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
 ## 🛠 Tech Stack
 
