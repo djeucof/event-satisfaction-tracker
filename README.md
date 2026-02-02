@@ -25,6 +25,7 @@ A lightweight, professional feedback collection system designed for events. This
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+4. **Run development server**: npm run dev
 
 ## 🔒 Security
 
